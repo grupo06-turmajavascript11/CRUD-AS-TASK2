@@ -1,6 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Usuario } from '../../usuario/entities/usuario.entity';
+import { Categoria } from '../../categoria/entities/categoria.entity';
 
 @Entity({ name: 'tb_alimentacao' })
 export class Alimentacao {
@@ -23,7 +24,7 @@ export class Alimentacao {
   @Column({ type: 'int' })
   calorias: number;
 
-  @ManyToOne(() => Categoria, (categoria) => categoria.alimentacoes)
+  @ManyToOne(() => Categoria, (categoria) => categoria.alimentacao)
   categoria: Categoria;
 
   @ManyToOne(() => Usuario, (usuario) => usuario.alimentacao)
