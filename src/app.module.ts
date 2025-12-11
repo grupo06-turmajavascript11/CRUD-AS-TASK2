@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule} from '@nestjs/typeorm';
+import { UsuarioModule } from './usuario/usuario.module';
 
 
 @Module({
@@ -13,7 +14,8 @@ import { TypeOrmModule} from '@nestjs/typeorm';
       database: 'db_leveebem',
       entities: [],
       synchronize: true
-    })
+    }),
+    UsuarioModule,
   ],
   controllers: [],
   providers: [],
