@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule} from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsuarioModule } from './usuario/usuario.module';
-
+import { Usuario } from './usuario/entities/usuario.entity';
+import { Alimentacao } from './alimentacao/entities/alimentacao.entity';
+import { AlimentacaoModule } from './alimentacao/alimentacao.module';
 
 @Module({
   imports: [
@@ -12,10 +14,11 @@ import { UsuarioModule } from './usuario/usuario.module';
       username: 'root',
       password: 'root',
       database: 'db_leveebem',
-      entities: [],
-      synchronize: true
+      entities: [Usuario, Alimentacao],
+      synchronize: true,
     }),
     UsuarioModule,
+    AlimentacaoModule,
   ],
   controllers: [],
   providers: [],
