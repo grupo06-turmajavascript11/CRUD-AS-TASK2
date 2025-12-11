@@ -1,20 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, ILike, Repository } from 'typeorm';
-import { Categorias } from '../entities/categoria.entity';
+import { Categoria } from '../entities/categoria.entity';
 
 @Injectable()
 export class CategoriaService {
   constructor(
-    @InjectRepository(Categorias)
-    private categoriasRepository: Repository<Categorias>,
+    @InjectRepository(Categoria)
+    private categoriaRepository: Repository<Categoria>,
   ) {}
 
-  async findAll(): Promise<Categorias[]> {
-    return await this.categoriasRepository.find({ relations: { alimentacao: true } });
+  async findAll(): Promise<Categoria[]> {
+    return await this.categoriaRepository.find({ relations: { alimentacao: true } });
   }
-  async findById(id: number): Promise<Categorias> {
-    const categoria = await this.categoriasRepository.findOne({
+  async findById(id: number): Promise<Categoria> {
+    const categoria = await this.categoriaRepository.findOne({
       where: { id },
       relations: { alimentacao: true },
     });
@@ -25,32 +25,32 @@ export class CategoriaService {
     return categoria;
   }
 
-  async findByDescricao(descricao: string): Promise<Categorias[]> {
-    return await this.categoriasRepository.find({
+  async findByDescricao(descricao: string): Promise<Categoria[]> {
+    return await this.categoriaRepository.find({
       where: { descricao: ILike(`%${descricao}%`) },
       relations: { alimentacao: true },
     });
   }
 
-  async create(categoria: Categorias): Promise<Categorias> {
-    return await this.categoriasRepository.save(categoria);
+  async create(categoria: Categoria): Promise<Categoria> {
+    return await this.categoriaRepository.save(categoria);
   }
 
-  async update(categoria: Categorias): Promise<Categorias> {
-    const buscacategoria = await this.findById(categoria.id);
+  async update(categoria: Categoria): Promise<Categoria> {
+    const buscaCategoria = await this.findById(categoria.id);
 
-    if (!buscacategoria)
+    if (!buscaCategoria)
       throw new HttpException('Categoria não encontrada!', HttpStatus.NOT_FOUND);
 
-    return await this.categoriasRepository.save(categoria);
+    return await this.categoriaRepository.save(categoria);
   }
 
   async delete(id: number): Promise<DeleteResult> {
-    const buscacategoria = await this.findById(id);
+    const buscaCategoria = await this.findById(id);
 
-    if (!buscacategoria)
+    if (!buscaCategoria)
       throw new HttpException('Categoria não encontrada!', HttpStatus.NOT_FOUND);
 
-    return await this.categoriasRepository.delete(id);
+    return await this.categoriaRepository.delete(id);
   }
 }
