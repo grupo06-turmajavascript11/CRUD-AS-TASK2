@@ -1,7 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Alimentacao } from '../entities/alimentacao.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, ILike, Repository } from 'typeorm';
+import { DeleteResult, ILike, Not, Repository } from 'typeorm';
+import { CategoriaService } from '../../categoria/services/categoria.service';
+import { UsuarioService } from '../../usuario/services/usuario.service';
+import e from 'express';
 
 @Injectable()
 export class AlimentacaoService {
@@ -9,12 +12,14 @@ export class AlimentacaoService {
     @InjectRepository(Alimentacao)
     private alimentacaoRepository: Repository<Alimentacao>,
     private categoriaService: CategoriaService,
+    private usuarioService: UsuarioService,
   ) {}
 
   async findAll(): Promise<Alimentacao[]> {
     return await this.alimentacaoRepository.find({
       relations: {
         categoria: true,
+        usuario: true,
       },
     });
   }
@@ -24,6 +29,7 @@ export class AlimentacaoService {
       where: { id },
       relations: {
         categoria: true,
+        usuario: true,
       },
     });
 
@@ -44,6 +50,7 @@ export class AlimentacaoService {
       },
       relations: {
         categoria: true,
+        usuario: true,  
       },
     });
   }
@@ -55,6 +62,15 @@ export class AlimentacaoService {
       if (!categoria) {
         throw new HttpException(
           'Categoria não encontrada!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+    } else if (alimentacao.usuario) {
+      const usuario = await this.usuarioService.findById(alimentacao.usuario.id);
+
+      if (!usuario) {
+        throw new HttpException(
+          'Usuário não encontrado!',
           HttpStatus.NOT_FOUND,
         );
       }
@@ -83,6 +99,16 @@ export class AlimentacaoService {
           HttpStatus.NOT_FOUND,
         );
       }
+    } else if (alimentacao.usuario) {
+      const usuario = await this.usuarioService.findById(
+        alimentacao.usuario.id,
+      );
+      if (!usuario) {
+        throw new HttpException(
+          'Usuário não encontrado!',
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
 
     await this.alimentacaoRepository.update(alimentacao.id, alimentacao);
@@ -105,4 +131,22 @@ export class AlimentacaoService {
     await this.alimentacaoRepository.clear();
     throw new HttpException('', HttpStatus.NO_CONTENT);
   }
+
+  async buscarRecomendacao(id: number): Promise<Alimentacao[]> {
+  const produtoAtual = await this.findById(id);
+
+  return await this.alimentacaoRepository.find({
+    where: {
+      categoria: {
+        id: produtoAtual.categoria.id
+      },
+      id: Not(id)
+    },
+    relations: ['categoria', 'usuario'],
+    order: {
+      preco: 'ASC'
+    },
+    take: 4
+  });
+}
 }

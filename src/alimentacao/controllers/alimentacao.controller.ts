@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { Alimentacao } from '../entities/alimentacao.entity';
 import { AlimentacaoService } from '../services/alimentacao.service';
@@ -17,16 +6,16 @@ import { AlimentacaoService } from '../services/alimentacao.service';
 @Controller('/alimentacao')
 export class AlimentacaoController {
   constructor(private readonly alimentacaoService: AlimentacaoService) {}
-  @Get()
+
+  @Get('/all')
   @HttpCode(HttpStatus.OK)
   findAll(): Promise<Alimentacao[]> {
     return this.alimentacaoService.findAll();
   }
 
-  @Get('/:id')
-  @HttpCode(HttpStatus.OK)
-  findById(@Param('id', ParseIntPipe) id: number): Promise<Alimentacao> {
-    return this.alimentacaoService.findById(id);
+  @Get('/recomendacao/:id')
+  async recomendarRefeicao(@Param('id', ParseIntPipe) id: number) {
+    return await this.alimentacaoService.buscarRecomendacao(id);
   }
 
   @Get('/nome/:nome')
@@ -35,13 +24,19 @@ export class AlimentacaoController {
     return this.alimentacaoService.findByName(nome);
   }
 
-  @Post()
+  @Get('/:id')
+  @HttpCode(HttpStatus.OK)
+  findById(@Param('id', ParseIntPipe) id: number): Promise<Alimentacao> {
+    return this.alimentacaoService.findById(id);
+  }
+
+  @Post('/cadastrar')
   @HttpCode(HttpStatus.CREATED)
   create(@Body() alimentacao: Alimentacao): Promise<Alimentacao> {
     return this.alimentacaoService.create(alimentacao);
   }
 
-  @Put()
+  @Put('/atualizar')
   @HttpCode(HttpStatus.OK)
   update(@Body() alimentacao: Alimentacao): Promise<Alimentacao> {
     return this.alimentacaoService.update(alimentacao);

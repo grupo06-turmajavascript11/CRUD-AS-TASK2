@@ -11,8 +11,11 @@ export class CategoriaService {
   ) {}
 
   async findAll(): Promise<Categoria[]> {
-    return await this.categoriaRepository.find({ relations: { alimentacao: true } });
+    return await this.categoriaRepository.find({
+      relations: { alimentacao: true },
+    });
   }
+
   async findById(id: number): Promise<Categoria> {
     const categoria = await this.categoriaRepository.findOne({
       where: { id },
@@ -52,5 +55,12 @@ export class CategoriaService {
       throw new HttpException('Categoria não encontrada!', HttpStatus.NOT_FOUND);
 
     return await this.categoriaRepository.delete(id);
+  }
+
+  async deleteAll(): Promise<DeleteResult> {
+    return await this.categoriaRepository.createQueryBuilder()
+      .delete()
+      .where({})
+      .execute();
   }
 }

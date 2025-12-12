@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsPositive } from 'class-validator';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Usuario } from '../../usuario/entities/usuario.entity';
 import { Categoria } from '../../categoria/entities/categoria.entity';
@@ -9,24 +9,31 @@ export class Alimentacao {
   id: number;
 
   @IsNotEmpty()
-  @Column()
+  @Column({length: 255, nullable: false})
   nome: string;
 
-  @IsNotEmpty()
-  @Column({ type: 'decimal', precision: 6, scale: 2 })
+  @IsNumber()
+  @IsPositive()
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
   preco: number;
 
   @IsNotEmpty()
-  @Column({ type: 'text' })
+  @Column({ length: 5000, nullable: false })
   ingredientes: string;
 
   @IsNotEmpty()
   @Column({ type: 'int' })
   calorias: number;
 
-  @ManyToOne(() => Categoria, (categoria) => categoria.alimentacao)
+  @IsNotEmpty()
+  @ManyToOne(() => Categoria, (categoria) => categoria.alimentacao, {
+    onDelete: 'CASCADE',
+  })
   categoria: Categoria;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.alimentacao)
+  @IsNotEmpty()
+  @ManyToOne(() => Usuario, (usuario) => usuario.alimentacao, {
+    onDelete: 'CASCADE',
+  })
   usuario: Usuario;
 }

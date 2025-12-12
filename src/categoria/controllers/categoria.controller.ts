@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
 import { Categoria } from '../entities/categoria.entity';
 import { CategoriaService } from '../services/categoria.service';
@@ -17,7 +6,7 @@ import { CategoriaService } from '../services/categoria.service';
 @Controller('/categoria')
 export class CategoriaController {
   constructor(private readonly categoriaService: CategoriaService) {}
-  @Get()
+  @Get('/all')
   @HttpCode(HttpStatus.OK)
   findAll(): Promise<Categoria[]> {
     return this.categoriaService.findAll();
@@ -35,13 +24,13 @@ export class CategoriaController {
     return this.categoriaService.findByDescricao(descricao);
   }
 
-  @Post()
+  @Post('/cadastrar')
   @HttpCode(HttpStatus.CREATED)
   create(@Body() categoria: Categoria): Promise<Categoria> {
     return this.categoriaService.create(categoria);
   }
 
-  @Put()
+  @Put('/atualizar')
   @HttpCode(HttpStatus.OK)
   update(@Body() categoria: Categoria): Promise<Categoria> {
     return this.categoriaService.update(categoria);
@@ -51,5 +40,11 @@ export class CategoriaController {
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
     return this.categoriaService.delete(id);
+  }
+
+  @Delete('/all')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteAll(): Promise<DeleteResult> {
+    return this.categoriaService.deleteAll();
   }
 }

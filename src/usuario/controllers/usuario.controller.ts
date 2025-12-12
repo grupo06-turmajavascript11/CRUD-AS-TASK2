@@ -18,10 +18,10 @@ export class UsuarioController {
         return this.usuarioService.findById(id)
     }
 
-    @Get('/usuario/:usuario')
+    @Get('/name/:name')
     @HttpCode(HttpStatus.OK)
-    findByUsuario(@Param('usuario') usuario: string): Promise<Usuario | null> {
-        return this.usuarioService.findByUsuario(usuario);
+    findByUsuario(@Param('name') name: string): Promise<Usuario | null> {
+        return this.usuarioService.findByUsuario(name);
     }
 
     @Post('/cadastrar')
