@@ -8,7 +8,7 @@ export class Categoria {
     id: number;
 
     @IsNotEmpty()
-    @Column({length:255, nullable:false})
+    @Column({length:255, nullable:false, unique:true})
     descricao: string;
 
     
