@@ -22,8 +22,10 @@ export class UsuarioController {
 
     @Get('/name/:name')
     @HttpCode(HttpStatus.OK)
-    async findByUsuario(@Param('name') name: string): Promise<Usuario | null> {
-        return await this.usuarioService.findByUsuario(name);
+    async findByUsuario(@Param('name') name: string): Promise<Usuario> {
+        const user = await this.usuarioService.findByUsuario(name);
+        if (!user) { throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND); }
+        return user;
     }
 
     @Post('/cadastrar')

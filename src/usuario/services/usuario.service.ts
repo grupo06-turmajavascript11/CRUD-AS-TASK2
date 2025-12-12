@@ -19,7 +19,7 @@ export class UsuarioService{
     async findByUsuario(usuario: string): Promise<Usuario | null> { 
         const buscarUsuario = await this.usuarioRepository.findOne({
             where: {
-                usuario: (usuario)
+                nome: (usuario)
             }
         })
         return buscarUsuario;
