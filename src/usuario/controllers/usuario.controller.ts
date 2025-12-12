@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { Usuario } from "../entities/usuario.entity";
 import { UsuarioService } from "../services/usuario.service";
 
@@ -8,32 +8,36 @@ export class UsuarioController {
 
     @Get('/all')
     @HttpCode(HttpStatus.OK)
-    findAll(): Promise<Usuario[]> {
+    async findAll(): Promise<Usuario[]> {
         return this.usuarioService.findAll();
     }
  
     @Get('/:id')
     @HttpCode(HttpStatus.OK)
-    findById(@Param('id', ParseIntPipe) id: number): Promise<Usuario> {
-        return this.usuarioService.findById(id)
+    async findById(@Param('id', ParseIntPipe) id: number): Promise<Usuario> {
+        const find = await this.usuarioService.findById(id)
+        if (!find) { throw new HttpException('Usuário não encontrado', HttpStatus.NOT_FOUND); }
+        return find;
     }
 
     @Get('/name/:name')
     @HttpCode(HttpStatus.OK)
-    findByUsuario(@Param('name') name: string): Promise<Usuario | null> {
-        return this.usuarioService.findByUsuario(name);
+    async findByUsuario(@Param('name') name: string): Promise<Usuario | null> {
+        return await this.usuarioService.findByUsuario(name);
     }
 
     @Post('/cadastrar')
     @HttpCode(HttpStatus.CREATED)
     async create(@Body() usuario: Usuario): Promise<Usuario> {
-        return this.usuarioService.create(usuario)
+        return await this.usuarioService.create(usuario)
     }
 
     @Put('/atualizar')
     @HttpCode(HttpStatus.OK)
     async update(@Body() usuario: Usuario): Promise<Usuario> {
-        return this.usuarioService.update(usuario)
+        const updated = await this.usuarioService.update(usuario);
+        if (!updated) { throw new HttpException('Erro ao atualizar usuário', HttpStatus.INTERNAL_SERVER_ERROR); }
+        return updated;
     }
 
     @Delete('/delete/:id')
@@ -41,7 +45,4 @@ export class UsuarioController {
     async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
         await this.usuarioService.delete(id);
     }
-
-
-
 }
