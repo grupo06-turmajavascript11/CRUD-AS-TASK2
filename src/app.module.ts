@@ -6,18 +6,24 @@ import { Alimentacao } from './alimentacao/entities/alimentacao.entity';
 import { AlimentacaoModule } from './alimentacao/alimentacao.module';
 import { Categoria } from './categoria/entities/categoria.entity';
 import { CategoriaModule } from './categoria/categoria.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'db_leveebem',
+      type: 'postgres',
+      host: 'dpg-d5t6393uibrs73cjjqa0-a.oregon-postgres.render.com', 
+      port: 5432,
+      username: 'db_leveebem_0xev_user',
+      password: '1PvBCvDuGflkqw2wj2jKyjNQ9OAiswon',
+      database: 'db_leveebem_0xev',
       entities: [Usuario, Alimentacao, Categoria],
-      synchronize: true,
+      synchronize: false, 
+      
+      ssl: {
+        rejectUnauthorized: false,
+      },
     }),
     UsuarioModule,
     AlimentacaoModule,
